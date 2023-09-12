@@ -14,14 +14,23 @@ class AirportsController extends Controller
     public function index(Request $request)
     {
         $airports = Airports::all();
-        $results =  DB::table('flights')
-            ->join('airports', 'flights.airport_id2', '=', 'airports.id')
+        $results1 =  DB::table('airports')
+            ->join('flights', 'flights.airport_id1', '=', 'airports.id')
             ->join('aircrafts', 'flights.aircraft_id', '=', 'aircrafts.id')
             ->where('aircrafts.tail', '=', $request->tail)
             ->where('flights.takeoff', '>', $request->date_from)
             ->where('flights.landing', '<', $request->date_to)
             ->select('aircrafts.tail','airports.id','airports.code_iata','airports.code_icao','flights.cargo_load','flights.cargo_offload','flights.landing','flights.takeoff')
             ->get();
+        $results2 =  DB::table('airports')
+            ->join('flights', 'flights.airport_id1', '=', 'airports.id')
+            ->join('aircrafts', 'flights.aircraft_id', '=', 'aircrafts.id')
+            ->where('aircrafts.tail', '=', $request->tail)
+            ->where('flights.takeoff', '>', $request->date_from)
+            ->where('flights.landing', '<', $request->date_to)
+            ->select('aircrafts.tail','airports.id as a_id','airports.code_iata','airports.code_icao','flights.cargo_load','flights.cargo_offload','flights.landing','flights.takeoff')
+            ->get();
+        $results = $results1->merge($results2)->unique('id');
         return response()->json($results);
     }
 
