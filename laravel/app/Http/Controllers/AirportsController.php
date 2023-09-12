@@ -23,7 +23,7 @@ class AirportsController extends Controller
             ->select('aircrafts.tail','airports.id','airports.code_iata','airports.code_icao','flights.cargo_load','flights.cargo_offload','flights.landing','flights.takeoff')
             ->get();
         $results2 =  DB::table('airports')
-            ->join('flights', 'flights.airport_id1', '=', 'airports.id')
+            ->join('flights', 'flights.airport_id2', '=', 'airports.id')
             ->join('aircrafts', 'flights.aircraft_id', '=', 'aircrafts.id')
             ->where('aircrafts.tail', '=', $request->tail)
             ->where('flights.takeoff', '>', $request->date_from)
